@@ -24,6 +24,11 @@ class ProjectHelper:
         wd.find_element_by_xpath("//input[@value='Add Project']").click()
         self.project_cache = None
 
+    def create_simple_project(self):
+        project = Project(name=self.random_string("name", 10), status="development", view_status="private",
+                          description="description")
+        self.create(project)
+
     def open_projects_management_page(self):
         wd = self.app.wd
         if not wd.current_url.endswith("/mantisbt-1.2.20/manage_proj_page.php"):
@@ -62,6 +67,16 @@ class ProjectHelper:
                 self.project_cache.append(Project(name=name, status=status, view_status=view_status,
                                                   description=description, id=id))
         return list(self.project_cache)
+
+    def delete_project_by_index(self, index):
+        wd = self.app.wd
+        self.open_projects_management_page()
+        elements = wd.find_elements_by_xpath("/html/body/table[3]/tbody/tr")[2:]
+        elements[index].find_element_by_xpath(".//td//a").click()
+        wd.find_element_by_xpath("//input[@value='Delete Project']").click()
+        # confirmation of deletion
+        wd.find_element_by_xpath("//input[@value='Delete Project']").click()
+        self.project_cache = None
 
     def truncate_whitespaces(self, s):
         cleared_str = re.sub("\s+", " ", s)

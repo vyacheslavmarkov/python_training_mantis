@@ -1,5 +1,6 @@
 from suds.client import Client
 from suds import WebFault
+from model.project import Project
 
 
 class SoapHelper:
@@ -14,3 +15,14 @@ class SoapHelper:
             return True
         except WebFault:
             return False
+
+    def get_projects_list(self):
+        username = self.app.config['webadmin']['username']
+        password = self.app.config['webadmin']['password']
+        client = Client("http://localhost/mantisbt-1.2.20/api/soap/mantisconnect.php?wsdl")
+        projects = client.service.mc_projects_get_user_accessible(username, password)
+        converted_projects = []
+        for project in projects:
+            converted_projects.append(Project(id=project.id, name=project.name, status=project.status.name,
+                                              view_status=project.view_state.name, description=project.description))
+        return converted_projects

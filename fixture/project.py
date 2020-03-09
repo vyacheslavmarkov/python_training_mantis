@@ -78,6 +78,15 @@ class ProjectHelper:
         wd.find_element_by_xpath("//input[@value='Delete Project']").click()
         self.project_cache = None
 
+    def delete_project_by_id(self, id):
+        wd = self.app.wd
+        self.open_projects_management_page()
+        wd.find_element_by_xpath("//a[@href='manage_proj_edit_page.php?project_id=%s']" % id).click()
+        wd.find_element_by_xpath("//input[@value='Delete Project']").click()
+        # confirmation of deletion
+        wd.find_element_by_xpath("//input[@value='Delete Project']").click()
+        self.project_cache = None
+
     def truncate_whitespaces(self, s):
         cleared_str = re.sub("\s+", " ", s)
         cleared_str = cleared_str.strip()
